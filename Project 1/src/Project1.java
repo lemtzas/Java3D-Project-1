@@ -31,6 +31,7 @@ public class Project1 {
     private InsertBehavior insertBehavior;
     private TransformGroup curTransform;
     private SimpleUniverse simpleU;
+    private Canvas3D canvas3D;
 
 
     public static void main(String[] args) {
@@ -95,7 +96,7 @@ public class Project1 {
 		System.setProperty("sun.awt.noerasebackground", "true");
 
 		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-		Canvas3D canvas3D = new Canvas3D(config);
+		canvas3D = new Canvas3D(config);
 		simpleU = new SimpleUniverse(canvas3D);
 		simpleU.getViewingPlatform().setNominalViewingTransform();
 		simpleU.getViewer().getView().setSceneAntialiasingEnable(true);
@@ -104,26 +105,25 @@ public class Project1 {
 
         addBoundingSphere(BOUNDS, scene);
 
-		torus3D = new Transform3D();
-		final TransformGroup torusTG = new TransformGroup();
-		torusTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        torusTG.setCapability(TransformGroup.ENABLE_PICK_REPORTING);
-		//torusTG.addChild(new Torus(0.4f, 0.1f, 200, 200));
-        //torusTG.addChild(new SpikeBomb(0.4f,0.3f));
-        //torusTG.addChild(new BoxFace());
-        //torusTG.addChild(new IcosahedronPlanes());
-        //torusTG.addChild(new Icosahedron());
-        torusTG.addChild(new Triforce());
-		scene.addChild(torusTG);
-        Behavior b = new PickRotateBehavior(scene, canvas3D, BOUNDS, PickInfo.PICK_GEOMETRY);
-        b.setSchedulingBounds(BOUNDS);
-        scene.addChild(b);
-        b = new PickTranslateBehavior(scene, canvas3D, BOUNDS, PickInfo.PICK_GEOMETRY);
-        b.setSchedulingBounds(BOUNDS);
-        scene.addChild(b);
-        b = new PickZoomBehavior(scene, canvas3D, BOUNDS, PickInfo.PICK_GEOMETRY);
-        b.setSchedulingBounds(BOUNDS);
-        scene.addChild(b);
+//		torus3D = new Transform3D();
+//		final TransformGroup torusTG = new TransformGroup();
+//		torusTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+//        torusTG.setCapability(TransformGroup.ENABLE_PICK_REPORTING);
+//		//torusTG.addChild(new Torus(0.4f, 0.1f, 200, 200));
+//        //torusTG.addChild(new SpikeBomb(0.4f,0.3f));
+//        //torusTG.addChild(new BoxFace());
+//        //torusTG.addChild(new IcosahedronPlanes());
+//        //torusTG.addChild(new Icosahedron());
+//        torusTG.addChild(new Triforce());
+//		scene.addChild(torusTG);
+
+        //REPLACED BY CamGrabBehavior
+//        b = new PickTranslateBehavior(scene, canvas3D, BOUNDS, PickInfo.PICK_GEOMETRY);
+//        b.setSchedulingBounds(BOUNDS);
+//        scene.addChild(b);
+//        b = new PickZoomBehavior(scene, canvas3D, BOUNDS, PickInfo.PICK_GEOMETRY);
+//        b.setSchedulingBounds(BOUNDS);
+//        scene.addChild(b);
 
 
         //movement
@@ -137,7 +137,7 @@ public class Project1 {
 
 		simpleU.addBranchGraph(scene);
 
-		JFrame appFrame = new JFrame("Project 1");
+		JFrame appFrame = new JFrame("Project 1 - David Sharer");
 		appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		appFrame.add(canvas3D);
         canvas3D.setPreferredSize(new Dimension(800, 600));
@@ -145,59 +145,8 @@ public class Project1 {
 //        MenuBar menuBar = new MenuBar();
 //        appFrame.setMenuBar(menuBar);
 //        menuBar.add(new Menu("Add Shape"));
-        JPanel sidebar = new JPanel();
-        sidebar.setLayout(new BoxLayout(sidebar,BoxLayout.Y_AXIS));
-        sidebar.setPreferredSize(new Dimension(200,600));
+        appFrame.add(generateSidebar(), BorderLayout.EAST);
 
-        //setup insertion selection
-        JRadioButton[] shapes = new JRadioButton[9];
-        int j = 0;
-        shapes[j++] = new JRadioButton(new AddObjectAction("(D) Sphere",new Sphere(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("(D) Cone",new Cone(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("(D) Color Cube",new ColorCube(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("Torus (from Class)",new Torus(.4f,0.2f,20,20),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("Triforce",new Triforce(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("Icosahedron",new Icosahedron(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("Icosahedron Planes",new IcosahedronPlanes(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("(C) Bowser Bomb",new SpikeBomb(1f),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("(C) Face",new BoxFace(),insertBehavior));
-        ButtonGroup bg = new ButtonGroup();
-        sidebar.add(new JLabel("What shape should be inserted?"));
-        for(int i = 0; i < shapes.length; i++) {
-            if(shapes[i] != null) {
-                bg.add(shapes[i]);
-                sidebar.add(shapes[i]);
-            }
-        }
-        shapes[0].setSelected(true);
-        appFrame.add(sidebar, BorderLayout.EAST);
-
-        //the instructions
-        sidebar.add(new JLabel("Instructions"));
-
-        JTextArea explanation = new JTextArea();
-        explanation.setEditable(false);
-        explanation.setWrapStyleWord(true);
-        explanation.setLineWrap(true);
-        explanation.append("WASD for planar movement (XZ)\n");
-        explanation.append("QE for up-down movement (Y)\n");
-        explanation.append("Right click and drag to rotate\n");
-        explanation.append("\n");
-        explanation.append("1 to insert an object\n");
-        explanation.append("2 to place selected objects\n");
-        explanation.append("3 to delete selected object.\n");
-        explanation.append("\n");
-        explanation.append("You have a light (always on)\n");
-        explanation.append("The black ball is your \"cursor\".\n");
-        sidebar.add(explanation);
-
-        //left align everything, for style
-        for(Component c : sidebar.getComponents()) {
-            if(c instanceof JComponent) {
-                JComponent jc = (JComponent)c;
-                jc.setAlignmentX(Component.LEFT_ALIGNMENT);
-            }
-        }
 
 
 
@@ -234,6 +183,65 @@ public class Project1 {
 		appFrame.setVisible(true);
 	}
 
+    private JPanel generateSidebar() {
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar,BoxLayout.Y_AXIS));
+        sidebar.setPreferredSize(new Dimension(200,600));
+
+        //setup insertion selection
+        JRadioButton[] shapes = new JRadioButton[9];
+        int j = 0;
+        shapes[j++] = new JRadioButton(new AddObjectAction("(U) Sphere",new Sphere(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("(U) Cone",new Cone(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("(U) Color Cube",new ColorCube(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("Torus (from Class)",new Torus(.4f,0.2f,20,20),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("Triforce",new Triforce(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("Icosahedron",new Icosahedron(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("Icosahedron Planes",new IcosahedronPlanes(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("(C) Bowser Bomb",new SpikeBomb(1f),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("(C) Face",new BoxFace(),insertBehavior));
+        ButtonGroup bg = new ButtonGroup();
+        sidebar.add(new JLabel("What shape should be inserted?"));
+        for(int i = 0; i < shapes.length; i++) {
+            if(shapes[i] != null) {
+                bg.add(shapes[i]);
+                sidebar.add(shapes[i]);
+            }
+        }
+        shapes[0].setSelected(true);
+
+        //the instructions
+        sidebar.add(new JLabel("Instructions"));
+
+        JTextArea explanation = new JTextArea();
+        explanation.setEditable(false);
+        explanation.setWrapStyleWord(true);
+        explanation.setLineWrap(true);
+        explanation.append("WASD for planar movement (XZ)\n");
+        explanation.append("QE for up-down movement (Y)\n");
+        explanation.append("Right click and drag to look\n");
+        explanation.append("Left click to \"grab\" an object\n");
+        explanation.append("2 to \"release\" the objects\n");
+        explanation.append("Left click and drag to rotate an object\n");
+        explanation.append("\n");
+        explanation.append("1 to insert an object (\"grabbed\")\n");
+        explanation.append("2 to place \"grabbed\" objects\n");
+        explanation.append("3 to delete \"grabbed\" objects\n");
+        explanation.append("\n");
+        explanation.append("You have a light (always on)\n");
+        explanation.append("The black ball is your \"cursor\".\n");
+        sidebar.add(explanation);
+
+        //left align everything, for style
+        for(Component c : sidebar.getComponents()) {
+            if(c instanceof JComponent) {
+                JComponent jc = (JComponent)c;
+                jc.setAlignmentX(Component.LEFT_ALIGNMENT);
+            }
+        }
+        return sidebar;
+    }
+
     private void setupInteraction(BranchGroup scene) {
 
         //lighting moves
@@ -259,6 +267,7 @@ public class Project1 {
         //////////////////////////
         //insertion point
         curTransform = new TransformGroup();
+        curTransform.setName("curTransform");
         curTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         curTransform.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
         curTransform.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
@@ -268,13 +277,27 @@ public class Project1 {
         sa.setColoringAttributes(new ColoringAttributes(0f, 0f, 0f, ColoringAttributes.SHADE_GOURAUD));
         curTransform.addChild(new Sphere(0.1f,sa));
         scene.addChild(curTransform);
+
+        //movement
         FlyCam fc = new FlyCam(simpleU.getViewingPlatform().getViewPlatformTransform(),focus,camera,up,DISTANCE, lightTransform, curTransform);
         fc.setSchedulingBounds(BOUNDS2);
         scene.addChild(fc);
+
+        //insertion
         insertBehavior = new InsertBehavior(scene,curTransform);
         insertBehavior.setSchedulingBounds(BOUNDS2);
         scene.addChild(insertBehavior);
         scene.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+
+        //selection
+        CamGrabBehavior camGrabBehavior = new CamGrabBehavior(canvas3D, scene, insertBehavior);
+        camGrabBehavior.setSchedulingBounds(BOUNDS2);
+        scene.addChild(camGrabBehavior);
+
+        //rotation
+        Behavior b = new PickRotateBehavior(scene, canvas3D, BOUNDS, PickInfo.PICK_GEOMETRY);
+        b.setSchedulingBounds(BOUNDS);
+        scene.addChild(b);
     }
 
     private class AddObjectAction extends AbstractAction {

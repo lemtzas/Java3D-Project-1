@@ -8,7 +8,7 @@ import javax.media.j3d.*;
 import javax.vecmath.Vector3d;
 
 /**
- * The first of two compound objects
+ * The first of two compound objects, a spikey bomb.
  */
 public class SpikeBomb extends BranchGroup {
     private final Sphere ball;

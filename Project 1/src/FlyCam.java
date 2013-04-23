@@ -10,28 +10,48 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Lemtzas
- * Date: 4/21/13
- * Time: 12:04 AM
- * To change this template use File | Settings | File Templates.
+ * A Behavior that works in conjunction with CamGrabBehavior and InsertBehavior (both optional).
+ *
+ * This behavior allows right click dragging with the mouse to look around, the use of WASD
+ * for XZ planar movement, and QE for y axis movement. In addition, it maintains a distance
+ * from the camera to a cursor (curTransform's origin or "focus"). This position is used by
+ * InsertBehavior to manage the placement and orientation of objects.
+ *
  */
 public class FlyCam extends Behavior {
-    Vector3d up;
-    Point3d focus;
-    Point3d camera;
+    /**for use with Transform.lookAt**/
+    private Vector3d up;
+    /**for use with Transform.lookAt**/
+    private Point3d focus;
+    /**for use with Transform.lookAt**/
+    private Point3d camera;
+
+    /**temporary Transform3Ds (so we don't have to instantiate a bunch)**/
     Transform3D t3d = new Transform3D();
+    /**temporary Transform3Ds (so we don't have to instantiate a bunch)**/
     Transform3D t3d2 = new Transform3D();
+
+    /**this is where the lookAt results go**/
     TransformGroup vpTrans;
+
+    /**how far should we be from our "cursor" ?**/
     double distance;
+
+    /**What do we listen to when keys are down?**/
     WakeupOr wakeupEventsKeyDown;
+    /**What do we listen to when keys aren't down?**/
     WakeupOr wakeupEventsNormal;
 
+    /**What keys are currently down?**/
     Set<Integer> pressedKeys = new HashSet<Integer>();
 
+    /**movement speed**/
     private static final double SPEED = 0.1d;
+    /**wakeUpTime duration**/
     private static final long MILLISECONDS = 20;
+    /**transform for the lighting (camera origin)**/
     private TransformGroup lightTransform;
+    /**transform for the cursor (focus origin)**/
     private TransformGroup curTransform;
 
     public FlyCam(TransformGroup vpTrans, Point3d focus, Point3d camera, Vector3d up, double distance, TransformGroup lightTransform, TransformGroup curTransform) {
@@ -107,6 +127,11 @@ public class FlyCam extends Behavior {
             this.wakeupOn(wakeupEventsKeyDown);
     }
 
+    /**
+     * Processes a timeslice (which are triggered only when keys are down).
+     *
+     * This moves the user through the virtual world with WASD+QE
+     */
     private void processTimeSlice() {
         int forward_back = 0;
         int left_right = 0;
@@ -156,6 +181,9 @@ public class FlyCam extends Behavior {
         camera.add(focus, offset);
     }
 
+    /**
+     * Updates the camera, lighting, and cursor transforms.
+     */
     private void updateCam() {
         //System.out.println(camera + " @ " + focus);
 
@@ -173,6 +201,10 @@ public class FlyCam extends Behavior {
         curTransform.setTransform(t3d);
     }
 
+    /**
+     * Translate the camera in a direction
+     * @param direction
+     */
     private void translate(Vector3d direction) {
         if(direction.lengthSquared() == 0) return;
         direction.normalize();
@@ -184,6 +216,11 @@ public class FlyCam extends Behavior {
         updateCam();
     }
 
+    /**
+     * Rotate the camera with its own position as the origin.
+     * @param xRadians
+     * @param yRadians
+     */
     private void rotate(double xRadians, double yRadians) {
         Vector3d viewDir= new Vector3d();
         viewDir.sub(focus, camera); //the view direction
@@ -207,6 +244,10 @@ public class FlyCam extends Behavior {
         updateCam();
     }
 
+    /**
+     * Handle keypresses (WASD+QE)
+     * @param e
+     */
     private void handleWASD(KeyEvent e) {
         //if(e.getID() != KeyEvent.KEY_PRESSED && e.getID() != KeyEvent.KEY_TYPED) return;
 
@@ -233,12 +274,19 @@ public class FlyCam extends Behavior {
         }
     }
 
-
+    /**Utility variables for handleMouse**/
     int prevMouseX=0,prevMouseY=0;
+    /**Utility variables for handleMouse**/
     double xFactor = 0.005;
+    /**Utility variables for handleMouse**/
     double yFactor = 0.005;
+    /**Utility variables for handleMouse**/
     boolean drag = false;
 
+    /**
+     * Handle mouse input. Right-click Dragging the mouse swivels the camera.
+     * @param e
+     */
     private void handleMouse(MouseEvent e) {
         if(e.getID() == MouseEvent.MOUSE_DRAGGED && drag) {
             //setup

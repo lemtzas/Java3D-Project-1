@@ -4,6 +4,9 @@ import javax.media.j3d.*;
 import javax.vecmath.Point3f;
 import com.sun.j3d.utils.geometry.*;
 
+/**
+ * The torus code from class.
+ */
 public class Torus extends Shape3D {
 	public Torus(float majorRadius, float minorRadius, int majorSamples, int minorSamples) {
 		setGeometry(createGeometry(majorRadius, minorRadius, majorSamples, minorSamples));

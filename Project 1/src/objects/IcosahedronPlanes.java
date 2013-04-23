@@ -7,15 +7,14 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Lemtzas
- * Date: 4/21/13
- * Time: 10:17 PM
- * To change this template use File | Settings | File Templates.
+ * The 3, golden-ratio rectangles used to produce the points of a d20.
  */
 public class IcosahedronPlanes extends Shape3D {
+    /**
+     * Creates three intersecting planes with a radius of approximately 1
+     */
     public IcosahedronPlanes() {
-        setGeometry(createGeometry(1));
+        setGeometry(createGeometry());
 
         Appearance meshApp = new Appearance();
         RenderingAttributes ra = new RenderingAttributes();
@@ -37,7 +36,7 @@ public class IcosahedronPlanes extends Shape3D {
         setAppearance(meshApp);
     }
 
-    private Geometry createGeometry(float radius) {
+    private Geometry createGeometry() {
         IndexedTriangleArray geometry = new IndexedTriangleArray(12, GeometryArray.COORDINATES | GeometryArray.COLOR_3, 6*3);// | GeometryArray.COLOR_3 | GeometryArray.NORMALS);
         Point3d  points[]  = new Point3d[12];
         int indices[] = new int[6*3];
@@ -68,8 +67,8 @@ public class IcosahedronPlanes extends Shape3D {
                 colors[loc2] = new Color3f(off_color,1,off_color);
                 colors[loc3] = new Color3f(off_color,off_color,1);
 
-                System.out.printf("(%d) %4d\t\t\t\t%4d\t\t\t\t%4d\n", vertex_number, loc1, loc2, loc3);
-                System.out.printf("       %s\t\t%s\t\t%s\n", colors[loc1], colors[loc2], colors[loc3]);
+                //System.out.printf("(%d) %4d\t\t\t\t%4d\t\t\t\t%4d\n", vertex_number, loc1, loc2, loc3);
+                //System.out.printf("       %s\t\t%s\t\t%s\n", colors[loc1], colors[loc2], colors[loc3]);
 //                //5 copies of each, for proper lighting
 //                for(int c = 0; c < 5; c++) {
 //                    int loc1 = (i * 2 + j + 4*0)*5 + c;
@@ -78,7 +77,7 @@ public class IcosahedronPlanes extends Shape3D {
 //                    points[loc1] = new Point3d(0 , i_factor , j_factor*golden_ratio);
 //                    points[loc2] = new Point3d(i_factor , j_factor*golden_ratio , 0);
 //                    points[loc3] = new Point3d(j_factor*golden_ratio , 0 , i_factor);
-//                    System.out.printf("%4d\t%4d\t%4d\n", loc1, loc2, loc3);
+//                    //System.out.printf("%4d\t%4d\t%4d\n", loc1, loc2, loc3);
 //                }
             }
         }

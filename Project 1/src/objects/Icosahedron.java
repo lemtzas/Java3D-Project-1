@@ -9,15 +9,15 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Lemtzas
- * Date: 4/21/13
- * Time: 10:17 PM
- * To change this template use File | Settings | File Templates.
+ * A psychadelic glowing d20.
  */
 public class Icosahedron extends Shape3D {
+
+    /**
+     * Creates a d20 of approximately radius 1
+     */
     public Icosahedron() {
-        setGeometry(createGeometry(1));
+        setGeometry(createGeometry());
 
         Appearance meshApp = new Appearance();
         RenderingAttributes ra = new RenderingAttributes();
@@ -33,21 +33,20 @@ public class Icosahedron extends Shape3D {
 
         Material meshMat = new Material();
         meshMat.setLightingEnable(true);
-        meshMat.setColorTarget(0);
         meshMat.setDiffuseColor(0f, 1f, 1f);
         meshApp.setMaterial(meshMat);
         meshApp.setColoringAttributes(new ColoringAttributes(0f, 0f, 0f, ColoringAttributes.SHADE_GOURAUD));
         setAppearance(meshApp);
     }
 
-    private Geometry createGeometry(float radius) {
+    private Geometry createGeometry() {
         IndexedTriangleArray geometry = new IndexedTriangleArray(12, GeometryArray.COORDINATES | GeometryArray.COLOR_3, 20*3);// | GeometryArray.COLOR_3 | GeometryArray.NORMALS);
         Point3d  points[]  = new Point3d[12];
         int indices[] = new int[20*3];
         Color3f colors[]  = new Color3f[12];
 //        Vector3d normals[] = new Vector3d[20*3];
 
-        //computation trick
+        //a simple way to get the points
         double golden_ratio = (1 + Math.sqrt(5)) / 2d;
 
         //all combinations http://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Icosahedron-golden-rectangles.svg/200px-Icosahedron-golden-rectangles.svg.png
@@ -72,18 +71,8 @@ public class Icosahedron extends Shape3D {
                 colors[loc3] = new Color3f(off_color,off_color,0.5f);
 
 
-                System.out.printf("(%d) %4d\t\t\t\t%4d\t\t\t\t%4d\n", vertex_number, loc1, loc2, loc3);
-                System.out.printf("       %s\t\t%s\t\t%s\n", colors[loc1], colors[loc2], colors[loc3]);
-//                //5 copies of each, for proper lighting
-//                for(int c = 0; c < 5; c++) {
-//                    int loc1 = (i * 2 + j + 4*0)*5 + c;
-//                    int loc2 = (i * 2 + j + 4*1)*5 + c;
-//                    int loc3 = (i * 2 + j + 4*2)*5 + c;
-//                    points[loc1] = new Point3d(0 , i_factor , j_factor*golden_ratio);
-//                    points[loc2] = new Point3d(i_factor , j_factor*golden_ratio , 0);
-//                    points[loc3] = new Point3d(j_factor*golden_ratio , 0 , i_factor);
-//                    System.out.printf("%4d\t%4d\t%4d\n", loc1, loc2, loc3);
-//                }
+//                System.out.printf("(%d) %4d\t\t\t\t%4d\t\t\t\t%4d\n", vertex_number, loc1, loc2, loc3);
+//                System.out.printf("       %s\t\t%s\t\t%s\n", colors[loc1], colors[loc2], colors[loc3]);
             }
         }
 

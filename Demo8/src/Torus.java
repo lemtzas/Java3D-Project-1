@@ -4,7 +4,17 @@ import com.sun.j3d.utils.geometry.NormalGenerator;
 import javax.media.j3d.*;
 import javax.vecmath.Point3f;
 
+/**
+ * The torus code from class.
+ */
 public class Torus extends Shape3D {
+    /**
+     * Creates a torus with the given metrics.
+     * @param majorRadius r1
+     * @param minorRadius r2
+     * @param majorSamples subdivisions about r1
+     * @param minorSamples subdivisions about r2
+     */
 	public Torus(float majorRadius, float minorRadius, int majorSamples, int minorSamples) {
 		setGeometry(createGeometry(majorRadius, minorRadius, majorSamples, minorSamples));
 		
