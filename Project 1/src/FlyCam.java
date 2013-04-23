@@ -168,6 +168,7 @@ public class FlyCam extends Behavior {
         t3d.setTranslation(new Vector3f(camera));
         lightTransform.setTransform(t3d);
         //update insertion point
+        curTransform.getTransform(t3d);
         t3d.setTranslation(new Vector3f(focus));
         curTransform.setTransform(t3d);
     }

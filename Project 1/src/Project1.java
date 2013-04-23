@@ -1,5 +1,7 @@
 import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
+import com.sun.j3d.utils.geometry.ColorCube;
+import com.sun.j3d.utils.geometry.Cone;
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.pickfast.behaviors.PickRotateBehavior;
@@ -144,11 +146,21 @@ public class Project1 {
 //        appFrame.setMenuBar(menuBar);
 //        menuBar.add(new Menu("Add Shape"));
         JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar,BoxLayout.Y_AXIS));
         sidebar.setPreferredSize(new Dimension(200,600));
 
         //setup insertion selection
-        JRadioButton[] shapes = new JRadioButton[8];
-        shapes[0] = new JRadioButton(new AddObjectAction("Sphere",new Sphere(),insertBehavior));
+        JRadioButton[] shapes = new JRadioButton[9];
+        int j = 0;
+        shapes[j++] = new JRadioButton(new AddObjectAction("(D) Sphere",new Sphere(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("(D) Cone",new Cone(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("(D) Color Cube",new ColorCube(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("Torus (from Class)",new Torus(.4f,0.2f,20,20),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("Triforce",new Triforce(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("Icosahedron",new Icosahedron(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("Icosahedron Planes",new IcosahedronPlanes(),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("(C) Bowser Bomb",new SpikeBomb(1f),insertBehavior));
+        shapes[j++] = new JRadioButton(new AddObjectAction("(C) Face",new BoxFace(),insertBehavior));
         ButtonGroup bg = new ButtonGroup();
         sidebar.add(new JLabel("What shape should be inserted?"));
         for(int i = 0; i < shapes.length; i++) {
@@ -159,6 +171,34 @@ public class Project1 {
         }
         shapes[0].setSelected(true);
         appFrame.add(sidebar, BorderLayout.EAST);
+
+        //the instructions
+        sidebar.add(new JLabel("Instructions"));
+
+        JTextArea explanation = new JTextArea();
+        explanation.setEditable(false);
+        explanation.setWrapStyleWord(true);
+        explanation.setLineWrap(true);
+        explanation.append("WASD for planar movement (XZ)\n");
+        explanation.append("QE for up-down movement (Y)\n");
+        explanation.append("Right click and drag to rotate\n");
+        explanation.append("\n");
+        explanation.append("1 to insert an object\n");
+        explanation.append("2 to place selected objects\n");
+        explanation.append("3 to delete selected object.\n");
+        explanation.append("\n");
+        explanation.append("You have a light (always on)\n");
+        explanation.append("The black ball is your \"cursor\".\n");
+        sidebar.add(explanation);
+
+        //left align everything, for style
+        for(Component c : sidebar.getComponents()) {
+            if(c instanceof JComponent) {
+                JComponent jc = (JComponent)c;
+                jc.setAlignmentX(Component.LEFT_ALIGNMENT);
+            }
+        }
+
 
 
 		appFrame.pack();
@@ -220,6 +260,10 @@ public class Project1 {
         //insertion point
         curTransform = new TransformGroup();
         curTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        curTransform.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
+        curTransform.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
+        curTransform.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
+        curTransform.setCapability(TransformGroup.ENABLE_PICK_REPORTING);
         Appearance sa = new Appearance();
         sa.setColoringAttributes(new ColoringAttributes(0f, 0f, 0f, ColoringAttributes.SHADE_GOURAUD));
         curTransform.addChild(new Sphere(0.1f,sa));
@@ -235,14 +279,16 @@ public class Project1 {
 
     private class AddObjectAction extends AbstractAction {
         Node node;
-        public AddObjectAction(String text, Node node, Object insertBehavior) {
+        InsertBehavior insertBehavior;
+        public AddObjectAction(String text, Node node, InsertBehavior insertBehavior) {
             super(text);
             this.node = node;
+            this.insertBehavior = insertBehavior;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            insertBehavior.setObject(node);
         }
     }
 }

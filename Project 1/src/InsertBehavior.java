@@ -19,6 +19,7 @@ public class InsertBehavior extends Behavior {
     private WakeupOr wakeupEvents;
     private TransformGroup curTransform;
     private BranchGroup scene;
+    private BranchGroup target;
     private Node curObject = new Sphere();
 
     /**
@@ -84,13 +85,9 @@ public class InsertBehavior extends Behavior {
     }
 
     private void placeObject() {
-        System.out.println("place object");
-    }
+        System.out.println("place objects");
 
-    private void insertObject() {
-
-        System.out.println("insert object");
-
+        //copy the current transform
         Transform3D t3d = new Transform3D();
         curTransform.getTransform(t3d);
         TransformGroup tg = new TransformGroup(t3d);
@@ -99,7 +96,36 @@ public class InsertBehavior extends Behavior {
 
         BranchGroup bg = new BranchGroup();
         bg.addChild(tg);
-        tg.addChild(curObject.cloneTree());
+
+        //copy over appropriate children
+        for(int i = curTransform.numChildren()-1; i >= 0 ; i--){
+            Node child = curTransform.getChild(i);
+            if(child instanceof BranchGroup) {
+                curTransform.removeChild(i);
+                tg.addChild(child);
+            }
+        }
+
+        //tg.addChild(curObject.cloneTree());
         scene.addChild(bg);
+    }
+
+    private void insertObject() {
+        System.out.println("insert object");
+
+        //add branch group (for detach) and a transform (for manipulation) with the new object at the root
+        BranchGroup bg = new BranchGroup();
+        TransformGroup tg = new TransformGroup();
+        bg.addChild(tg);
+        bg.setCapability(BranchGroup.ALLOW_DETACH);
+        tg.setCapability(TransformGroup.ENABLE_PICK_REPORTING);
+        tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        tg.addChild(curObject.cloneTree());
+        curTransform.addChild(bg);
+    }
+
+    /**Sets the object to insert**/
+    public void setObject(Node node) {
+        this.curObject = node;
     }
 }
