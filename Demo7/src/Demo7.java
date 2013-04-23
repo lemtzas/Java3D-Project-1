@@ -21,7 +21,16 @@ public class Demo7 {
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas3D = new Canvas3D(config);
         SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
-        simpleU.getViewingPlatform().setNominalViewingTransform();
+
+        Transform3D lookAt = new Transform3D();
+        Point3d center = new Point3d(); //origin
+        Point3d eye = new Point3d(0,0,3);
+        Vector3d up = new Vector3d(0,1,0);
+        lookAt.lookAt(eye,center,up);
+        lookAt.invert();
+        simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(lookAt);
+
+        //simpleU.getViewingPlatform().setNominalViewingTransform();
         simpleU.getViewer().getView().setSceneAntialiasingEnable(true);
 
         BranchGroup scene = new BranchGroup();
@@ -50,10 +59,11 @@ public class Demo7 {
 
         JFrame appFrame = new JFrame("Java 3D Demo 7");
         appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        canvas3D.setPreferredSize(new Dimension(800,600));
         appFrame.add(canvas3D);
         appFrame.pack();
-        if (Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
-            appFrame.setExtendedState(appFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+//        if (Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
+//            appFrame.setExtendedState(appFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         appFrame.setVisible(true);
     }
 }
