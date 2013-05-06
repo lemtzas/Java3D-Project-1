@@ -190,28 +190,39 @@ public class Project1 {
 
         //setup insertion selection
         JRadioButton[] shapes = new JRadioButton[9];
-        int j = 0;
-        shapes[j++] = new JRadioButton(new AddObjectAction("(U) Sphere",new Sphere(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("(U) Cone",new Cone(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("(U) Color Cube",new ColorCube(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("Torus (from Class)",new Torus(.4f,0.2f,20,20),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("Triforce",new Triforce(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("Icosahedron",new Icosahedron(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("Icosahedron Planes",new IcosahedronPlanes(),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("(C) Bowser Bomb",new SpikeBomb(1f),insertBehavior));
-        shapes[j++] = new JRadioButton(new AddObjectAction("(C) Face",new BoxFace(),insertBehavior));
         ButtonGroup bg = new ButtonGroup();
+        sidebar.add(new JSeparator());
+        sidebar.add(new JSeparator());
         sidebar.add(new JLabel("What shape should be inserted?"));
-        for(int i = 0; i < shapes.length; i++) {
-            if(shapes[i] != null) {
-                bg.add(shapes[i]);
-                sidebar.add(shapes[i]);
-            }
-        }
+        sidebar.add(new JSeparator());
+        sidebar.add(new JLabel("Basic"));
+        int j = 0;
+        shapes[j] = new JRadioButton(new AddObjectAction("(util) Sphere",new Sphere(),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
+        shapes[j] = new JRadioButton(new AddObjectAction("(util) Cone",new Cone(),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
+        shapes[j] = new JRadioButton(new AddObjectAction("(util) Color Cube",new ColorCube(),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
+        shapes[j] = new JRadioButton(new AddObjectAction("(class) Torus",new Torus(.4f,0.2f,20,20),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
+        shapes[j] = new JRadioButton(new AddObjectAction("Triforce",new Triforce(),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
+        shapes[j] = new JRadioButton(new AddObjectAction("Icosahedron",new Icosahedron(),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
+        shapes[j] = new JRadioButton(new AddObjectAction("Icosahedron Planes",new IcosahedronPlanes(),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
+        sidebar.add(new JLabel("Compound"));
+        shapes[j] = new JRadioButton(new AddObjectAction("Bowser Bomb",new SpikeBomb(1f),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
+        shapes[j] = new JRadioButton(new AddObjectAction("Face",new BoxFace(),insertBehavior));
+        bg.add(shapes[j]); sidebar.add(shapes[j]);j++;
         shapes[0].setSelected(true);
 
         //the instructions
+        sidebar.add(new JSeparator());
+        sidebar.add(new JSeparator());
         sidebar.add(new JLabel("Instructions"));
+        sidebar.add(new JSeparator());
 
         JTextArea explanation = new JTextArea();
         explanation.setEditable(false);
@@ -230,6 +241,8 @@ public class Project1 {
         explanation.append("\n");
         explanation.append("You have a light (always on)\n");
         explanation.append("The black ball is your \"cursor\".\n");
+        explanation.append("\n");
+        explanation.append("The rendering area must be selected to move.\n");
         sidebar.add(explanation);
 
         //left align everything, for style
